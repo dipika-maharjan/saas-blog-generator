@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
 import { auth, db } from "@/lib/firebase";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc, collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -19,7 +19,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // 1. Fetch user data
     const userRef = doc(db, "users", uid);
     const userSnap = await getDoc(userRef);
 
@@ -32,7 +31,6 @@ export async function POST(req: Request) {
 
     const userData = userSnap.data();
 
-    // 2. Check credits
     if (userData.credits <= 0) {
       return NextResponse.json(
         { error: "Not enough credits" },
@@ -40,14 +38,12 @@ export async function POST(req: Request) {
       );
     }
 
-    // 3. Generate blog with OpenAI
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content:
-            "You are an expert SEO blog writer. Write clear, structured, SEO-optimized blogs.",
+          content: "You are an expert SEO blog writer. Write clear, structured, SEO-optimized blogs.",
         },
         {
           role: "user",
@@ -58,12 +54,18 @@ export async function POST(req: Request) {
 
     const blog = completion.choices[0].message.content;
 
-    // 4. Deduct 1 credit
     await updateDoc(userRef, {
       credits: userData.credits - 1,
     });
 
-    // 5. Return blog
+    const blogsRef = collection(db, "users", uid, "blogs");
+    await addDoc(blogsRef, {
+      keyword,
+      tone,
+      content: blog,
+      createdAt: serverTimestamp(),
+    });
+
     return NextResponse.json({ blog });
   } catch (error) {
     console.error(error);

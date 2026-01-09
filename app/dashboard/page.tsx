@@ -42,7 +42,9 @@ export default function DashboardPage() {
   const [blogHistory, setBlogHistory] = useState<Blog[]>([]);
   const [generating, setGenerating] = useState(false);
 
-  // Fetch user + blogs
+  const hasCredits = (userData?.credits ?? 0) > 0;
+
+  // Auth + data fetch
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
@@ -52,19 +54,22 @@ export default function DashboardPage() {
 
       setUser(currentUser);
 
-      // Fetch user data
+      // User data
       const userRef = doc(db, "users", currentUser.uid);
       const snap = await getDoc(userRef);
       if (snap.exists()) {
         setUserData(snap.data() as UserData);
       }
 
-      // Fetch blogs
+      // Blog history
       const blogsRef = collection(db, "users", currentUser.uid, "blogs");
       const q = query(blogsRef, orderBy("createdAt", "desc"));
       const snapshot = await getDocs(q);
       setBlogHistory(
-        snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Blog))
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Blog[]
       );
 
       setLoading(false);
@@ -73,9 +78,9 @@ export default function DashboardPage() {
     return () => unsubscribe();
   }, [router]);
 
-  // Generate blog
+  // Blog generation
   const handleGenerate = async () => {
-    if (!keyword || !user) return;
+    if (!keyword || !user || !hasCredits) return;
 
     setGenerating(true);
     setBlogOutput("Generating blog...");
@@ -100,12 +105,18 @@ export default function DashboardPage() {
 
       setBlogOutput(data.blog);
 
-      // Add to local history instantly
+      // Optimistic UI update
       setBlogHistory((prev) => [
-        { id: Date.now().toString(), keyword, tone, content: data.blog, createdAt: new Date() },
+        {
+          id: Date.now().toString(),
+          keyword,
+          tone,
+          content: data.blog,
+          createdAt: new Date(),
+        },
         ...prev,
       ]);
-    } catch (error) {
+    } catch {
       setBlogOutput("Something went wrong");
     } finally {
       setGenerating(false);
@@ -125,7 +136,9 @@ export default function DashboardPage() {
       <div className="mx-auto max-w-4xl space-y-6">
         {/* Header */}
         <div className="rounded-xl bg-white p-6 shadow">
-          <h1 className="text-2xl font-semibold text-gray-800">Dashboard</h1>
+          <h1 className="text-2xl font-semibold text-gray-800">
+            Dashboard
+          </h1>
           <p className="text-sm text-gray-500">
             Welcome back, {user?.email}
           </p>
@@ -138,6 +151,13 @@ export default function DashboardPage() {
             <p className="mt-2 text-xl font-medium capitalize">
               {userData?.plan ?? "free"}
             </p>
+
+            <button
+              onClick={() => router.push("/pricing")}
+              className="mt-3 rounded-lg border border-black px-3 py-1 text-sm hover:bg-black hover:text-white"
+            >
+              Upgrade Plan
+            </button>
           </div>
 
           <div className="rounded-xl bg-white p-6 shadow">
@@ -172,9 +192,15 @@ export default function DashboardPage() {
             <option value="informative">Informative</option>
           </select>
 
+          {!hasCredits && (
+            <p className="text-sm text-red-500">
+              You’ve used all your credits. Upgrade your plan to continue.
+            </p>
+          )}
+
           <button
             onClick={handleGenerate}
-            disabled={!keyword || generating}
+            disabled={!keyword || generating || !hasCredits}
             className="rounded-lg bg-black px-4 py-2 text-white hover:bg-gray-800 disabled:opacity-50"
           >
             {generating ? "Generating..." : "Generate Blog"}
@@ -190,7 +216,10 @@ export default function DashboardPage() {
         {/* Blog History */}
         {blogHistory.length > 0 && (
           <div className="rounded-xl bg-white p-6 shadow space-y-4">
-            <h2 className="text-xl font-semibold text-gray-800">My Blogs</h2>
+            <h2 className="text-xl font-semibold text-gray-800">
+              My Blogs
+            </h2>
+
             {blogHistory.map((b) => (
               <div key={b.id} className="border-b py-2">
                 <p className="text-sm text-gray-500">

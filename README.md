@@ -73,38 +73,7 @@ npm install
   - **Pro**: 200 credits at $19 (get the `price_` ID)
 - Get your Secret Key from Developers > API Keys
 
-**3. Configure environment**
-```bash
-cp .env.example .env.local
-```
-
-Edit `.env.local`:
-```
-# App URL
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-
-# Firebase (Client)
-NEXT_PUBLIC_FIREBASE_API_KEY=your_key_here
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456789
-NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789:web:abc123
-
-# Firebase Admin (Server) — From downloaded JSON
-FIREBASE_ADMIN_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIE...\n-----END PRIVATE KEY-----\n"
-FIREBASE_ADMIN_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your-project.iam.gserviceaccount.com
-
-# OpenAI
-OPENAI_API_KEY=sk-...
-OPENAI_MODEL=gpt-4o-mini
-
-# Stripe
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_test_...
-```
-
-**4. Run development server**
+**3. Run development server**
 ```bash
 npm run dev
 ```

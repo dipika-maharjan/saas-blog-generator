@@ -36,6 +36,10 @@ Generate SEO-optimized blog posts from keywords with AI, manage user authenticat
   <img src="public/screenshots/dashboard.JPG" alt="Dashboard" width="600" />
 </p>
 
+<p align="center">
+  <img src="public/screenshots/generated_blog.JPG" alt="Generated Blog" width="900" />
+</p>
+
 > Place image files at: `public/screenshots/` with the names used above
 
 ### Prerequisites

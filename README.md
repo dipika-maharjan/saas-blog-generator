@@ -48,7 +48,6 @@ Generate SEO-optimized blog posts from keywords with AI, manage user authenticat
 - Firebase project (Firestore + Authentication)
 - OpenAI API key (GPT-4 model access)
 - Stripe account with API keys
-- Stripe CLI (for local webhook testing)
 
 ### Quick Start
 
@@ -83,45 +82,6 @@ npm run dev
 ```
 Open http://localhost:3000
 
-### API Endpoints
-
-**Generate Blog**
-- `POST /api/generate`
-- Body: `{ keyword: string, tone: "professional" | "casual" | "informative", uid: string }`
-- Uses 1 credit per generation
-- Stores in user's `/blogs` collection
-
-**Stripe Checkout**
-- `POST /api/stripe/checkout`
-- Body: `{ priceId: string, uid: string }`
-- Redirects to Stripe checkout session
-
-**Stripe Webhook**
-- `POST /api/stripe/webhook`
-- Listens for `checkout.session.completed`
-- Updates user's plan and credits
-
-### Local Testing with Stripe CLI
-
-**Install Stripe CLI**:
-```bash
-# Windows (Winget)
-winget install Stripe.StripeCLI
-
-
-
-**Test webhooks**:
-```bash
-# Terminal 1: Start forwarding webhook
-stripe login
-stripe listen --forward-to http://localhost:3000/api/stripe/webhook
-
-# Terminal 2: Trigger test event
-stripe trigger checkout.session.completed
-```
-
-Copy the webhook signing secret to `STRIPE_WEBHOOK_SECRET` in `.env.local`.
-
 ### Key Features Explained
 
 **Credit System**:
@@ -140,4 +100,4 @@ Copy the webhook signing secret to `STRIPE_WEBHOOK_SECRET` in `.env.local`.
 - Server-side user verification
 - Credit validation before generation
 - Secure Stripe webhook signature verification
-- Firebase security rules (enable in production)
+- Firebase security rules 

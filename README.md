@@ -11,14 +11,32 @@ Generate SEO-optimized blog posts from keywords with AI, manage user authenticat
 - **Styling**: Tailwind CSS
 
 ### Features
-✅ AI-powered SEO blog generation  
-✅ User authentication (register/login)  
-✅ Credit-based subscription system  
-✅ Stripe payment integration  
-✅ Blog history and management  
-✅ Multiple tone options (Professional, Casual, Informative)  
-✅ Responsive landing page  
-✅ Dashboard with real-time stats  
+ AI-powered SEO blog generation  
+ User authentication (register/login)  
+ Credit-based subscription system  
+ Stripe payment integration  
+ Blog history and management  
+ Multiple tone options (Professional, Casual, Informative)  
+ Responsive landing page  
+ Dashboard with real-time stats  
+
+### Screenshots
+
+<p align="center">
+  <img src="public/screenshots/page1.JPG" alt="Page" width="900" />
+</p>
+
+<p>
+  <img src="public/screenshots/login.JPG" alt="Login" width="600" />
+  <img src="public/screenshots/register.JPG" alt="Register" width="600" />
+</p>
+
+<p>
+  <img src="public/screenshots/page2.JPG" alt="Pricing Page" width="600" />
+  <img src="public/screenshots/dashboard.JPG" alt="Dashboard" width="600" />
+</p>
+
+> Place image files at: `public/screenshots/` with the names used above
 
 ### Prerequisites
 - Node.js 18+
@@ -110,17 +128,6 @@ Open http://localhost:3000
 - Listens for `checkout.session.completed`
 - Updates user's plan and credits
 
-### Pages
-
-| Route | Purpose |
-|-------|---------|
-| `/` | Landing page with features & pricing |
-| `/auth/login` | User login |
-| `/auth/register` | User registration (starts with 3 free credits) |
-| `/dashboard` | Blog generator & history |
-| `/pricing` | Upgrade plans |
-| `/success` | Payment success confirmation |
-
 ### Local Testing with Stripe CLI
 
 **Install Stripe CLI**:
@@ -128,11 +135,7 @@ Open http://localhost:3000
 # Windows (Winget)
 winget install Stripe.StripeCLI
 
-# macOS (Brew)
-brew install stripe/stripe-cli/stripe
 
-# Linux (See https://stripe.com/docs/stripe-cli)
-```
 
 **Test webhooks**:
 ```bash
@@ -145,28 +148,6 @@ stripe trigger checkout.session.completed
 ```
 
 Copy the webhook signing secret to `STRIPE_WEBHOOK_SECRET` in `.env.local`.
-
-### Project Structure
-```
-app/
-  ├── page.tsx                    # Landing page
-  ├── layout.tsx                  # Root layout
-  ├── api/
-  │   ├── generate/route.ts       # Blog generation
-  │   └── stripe/
-  │       ├── checkout/route.ts   # Stripe session creation
-  │       └── webhook/route.ts    # Webhook handler
-  ├── auth/
-  │   ├── login/page.tsx
-  │   └── register/page.tsx
-  ├── dashboard/page.tsx          # Main app dashboard
-  ├── pricing/page.tsx            # Pricing page
-  └── success/page.tsx            # Payment success
-lib/
-  ├── firebase.ts                 # Client Firebase config
-  ├── firebase-admin.ts           # Server-side Admin SDK
-  └── auth.ts                     # Auth utilities
-```
 
 ### Key Features Explained
 
@@ -187,40 +168,3 @@ lib/
 - Credit validation before generation
 - Secure Stripe webhook signature verification
 - Firebase security rules (enable in production)
-
-### Deployment
-
-**Build**:
-```bash
-npm run build
-```
-
-**Deploy to Vercel** (recommended):
-```bash
-npm i -g vercel
-vercel
-```
-
-**Set environment variables** in Vercel dashboard or:
-```bash
-vercel env add OPENAI_API_KEY
-vercel env add STRIPE_SECRET_KEY
-# ... etc
-```
-
-### Environment Variables Reference
-
-See [.env.example](.env.example) for all required variables.
-
-### Troubleshooting
-
-**"OpenAI API error"**: Check `OPENAI_API_KEY` is valid and has credits  
-**"Stripe webhook error"**: Verify `STRIPE_WEBHOOK_SECRET` matches your webhook signing secret  
-**"Firebase Auth error"**: Ensure Authentication is enabled and Database Rules allow reads/writes  
-**"Blog generation failed"**: Check OpenAI quota and retry with shorter keyword  
-
-### Support
-For issues or feature requests, open an issue on GitHub.
-
-### License
-MIT

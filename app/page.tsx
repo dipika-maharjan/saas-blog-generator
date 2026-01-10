@@ -1,65 +1,173 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useAuthState } from "react-firebase-hooks/auth";
+import { useRouter } from "next/navigation";
+import { auth } from "@/lib/firebase";
+
+export default function HomePage() {
+  const [user] = useAuthState(auth);
+  const router = useRouter();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 text-white">
+      {/* Navigation */}
+      <nav className="flex items-center justify-between px-8 py-6 border-b border-slate-700">
+        <div className="text-2xl font-bold text-blue-400">BlogGen AI</div>
+        <div className="flex gap-4">
+          {user ? (
+            <>
+              <button
+                onClick={() => router.push("/dashboard")}
+                className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 font-semibold"
+              >
+                Dashboard
+              </button>
+              <button
+                onClick={() => auth.signOut()}
+                className="px-6 py-2 rounded-lg border border-slate-400 hover:bg-slate-700 font-semibold"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => router.push("/auth/login")}
+                className="px-6 py-2 rounded-lg border border-slate-400 hover:bg-slate-700 font-semibold"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => router.push("/auth/register")}
+                className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 font-semibold"
+              >
+                Sign Up
+              </button>
+            </>
+          )}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </nav>
+
+      {/* Hero Section */}
+      <div className="max-w-6xl mx-auto px-8 py-20 text-center">
+        <h1 className="text-5xl md:text-6xl font-bold mb-6">
+          Generate <span className="text-blue-400">SEO-Optimized Blogs</span> in Seconds
+        </h1>
+        <p className="text-xl text-slate-300 mb-8 max-w-3xl mx-auto">
+          Harness the power of AI to create high-quality, SEO-optimized blog posts instantly. 
+          Perfect for content creators, marketers, and agencies.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+          {!user && (
+            <>
+              <button
+                onClick={() => router.push("/auth/register")}
+                className="px-8 py-4 rounded-lg bg-blue-600 hover:bg-blue-700 font-bold text-lg"
+              >
+                Get Started Free
+              </button>
+              <button
+                onClick={() => router.push("/pricing")}
+                className="px-8 py-4 rounded-lg border-2 border-blue-400 hover:bg-slate-700 font-bold text-lg"
+              >
+                View Pricing
+              </button>
+            </>
+          )}
+          {user && (
+            <button
+              onClick={() => router.push("/dashboard")}
+              className="px-8 py-4 rounded-lg bg-blue-600 hover:bg-blue-700 font-bold text-lg"
+            >
+              Go to Dashboard
+            </button>
+          )}
         </div>
-      </main>
+
+        {/* Features */}
+        <div className="grid md:grid-cols-3 gap-8 mt-20">
+          <div className="bg-slate-700/50 rounded-lg p-8 border border-slate-600">
+            <div className="text-3xl mb-4">⚡</div>
+            <h3 className="text-xl font-bold mb-3">Lightning Fast</h3>
+            <p className="text-slate-300">Generate complete blogs in seconds, not hours.</p>
+          </div>
+
+          <div className="bg-slate-700/50 rounded-lg p-8 border border-slate-600">
+            <div className="text-3xl mb-4">🎯</div>
+            <h3 className="text-xl font-bold mb-3">SEO Optimized</h3>
+            <p className="text-slate-300">AI-powered content designed to rank higher in search engines.</p>
+          </div>
+
+          <div className="bg-slate-700/50 rounded-lg p-8 border border-slate-600">
+            <div className="text-3xl mb-4">💰</div>
+            <h3 className="text-xl font-bold mb-3">Affordable</h3>
+            <p className="text-slate-300">Flexible plans for solo creators and growing teams.</p>
+          </div>
+        </div>
+
+        {/* Pricing Preview */}
+        <div className="mt-20">
+          <h2 className="text-3xl font-bold mb-12">Simple, Transparent Pricing</h2>
+          <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto">
+            <div className="bg-slate-700/50 rounded-lg p-8 border border-slate-600">
+              <h3 className="text-2xl font-bold mb-2">Starter</h3>
+              <p className="text-slate-300 mb-4">50 credits</p>
+              <p className="text-3xl font-bold mb-6">$9</p>
+              <button
+                onClick={() => router.push(user ? "/pricing" : "/auth/register")}
+                className="w-full px-6 py-2 rounded-lg border border-blue-400 hover:bg-slate-600"
+              >
+                Get Started
+              </button>
+            </div>
+
+            <div className="bg-blue-600/30 rounded-lg p-8 border-2 border-blue-400">
+              <h3 className="text-2xl font-bold mb-2">Pro</h3>
+              <p className="text-slate-300 mb-4">200 credits</p>
+              <p className="text-3xl font-bold mb-6">$19</p>
+              <button
+                onClick={() => router.push(user ? "/pricing" : "/auth/register")}
+                className="w-full px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 font-bold"
+              >
+                Get Started
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ */}
+        <div className="mt-20 max-w-2xl mx-auto text-left">
+          <h2 className="text-3xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
+
+          <div className="space-y-6">
+            <div className="bg-slate-700/30 rounded-lg p-6 border border-slate-600">
+              <h4 className="font-bold text-lg mb-2">How many blogs can I generate?</h4>
+              <p className="text-slate-300">Each blog generation uses 1 credit. Your plan determines how many credits you get.</p>
+            </div>
+
+            <div className="bg-slate-700/30 rounded-lg p-6 border border-slate-600">
+              <h4 className="font-bold text-lg mb-2">Can I download my blogs?</h4>
+              <p className="text-slate-300">Yes! Access all your generated blogs in the dashboard and download them anytime.</p>
+            </div>
+
+            <div className="bg-slate-700/30 rounded-lg p-6 border border-slate-600">
+              <h4 className="font-bold text-lg mb-2">Is the content plagiarism-free?</h4>
+              <p className="text-slate-300">Our AI generates original content. We recommend reviewing and personalizing as needed.</p>
+            </div>
+
+            <div className="bg-slate-700/30 rounded-lg p-6 border border-slate-600">
+              <h4 className="font-bold text-lg mb-2">Do you offer refunds?</h4>
+              <p className="text-slate-300">If you're not satisfied, contact us within 7 days for a full refund.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-700 py-8 text-center text-slate-400">
+        <p>&copy; 2026 BlogGen AI. All rights reserved.</p>
+      </footer>
     </div>
   );
 }
